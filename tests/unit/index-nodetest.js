@@ -12,7 +12,7 @@ describe('webhooks plugin', function() {
   let BUGSNAG_URI = 'http://notify.bugsnag.com/deploy';
 
   before(function() {
-    subject = require('../../index'); // eslint-disable-line node/no-missing-require
+    subject = require('../../index');
   });
 
   beforeEach(function() {

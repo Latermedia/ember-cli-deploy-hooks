@@ -6,10 +6,7 @@ var DeployPluginBase = require('ember-cli-deploy-plugin');
 var Notify = require('./lib/notify');
 var Service = require('./lib/service');
 var _ = require('lodash');
-var merge = _.merge;
 var pick = _.pick;
-var intersection = _.intersection;
-var forIn = _.forIn;
 
 function notificationHook(hookName) {
   return function(context) {
@@ -52,7 +49,7 @@ module.exports = {
       name: options.name,
 
       defaultConfig: {
-        configuredServices: function(context) {
+        configuredServices: function(/* context */) {
           return {
             bugsnag: {
               url: 'http://notify.bugsnag.com/deploy',
@@ -85,7 +82,7 @@ module.exports = {
         }
       },
 
-      setup: function(context) {
+      setup: function(/* context */) {
         var services = this.readConfig('services');
         var hooks = [
           'willDeploy', 'willBuild', 'build', 'didBuild', 'willPrepare', 'prepare',
