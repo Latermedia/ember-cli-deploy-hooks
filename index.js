@@ -42,7 +42,7 @@ function notificationHook(hookName) {
 }
 
 module.exports = {
-  name: require('./package').name,
+  name: "ember-cli-deploy-hooks",
 
   createDeployPlugin: function(options) {
     var DeployPlugin = DeployPluginBase.extend({
