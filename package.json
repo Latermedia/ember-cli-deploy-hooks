@@ -1,14 +1,13 @@
 {
-  "name": "ember-cli-deploy-hooks",
+  "name": "@latermedia/ember-cli-deploy-hooks",
   "version": "0.1.0",
   "description": "Ember CLI Deploy plugin for calling webhooks during deployments",
   "keywords": [
     "ember-addon",
     "ember-cli-deploy-plugin"
   ],
-  "repository": "https://github.com/latermedia/ember-cli-deploy-webhooks",
+  "repository": "https://github.com/latermedia/ember-cli-deploy-hooks",
   "license": "MIT",
-  "author": "simplabs GmbH",
   "directories": {
     "doc": "doc",
     "test": "tests"
