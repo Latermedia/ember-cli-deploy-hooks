@@ -45,7 +45,7 @@ module.exports = {
   name: "ember-cli-deploy-hooks",
 
   createDeployPlugin: function (options) {
-    let DeployPlugin = DeployPluginBase.extend({
+    const DeployPlugin = DeployPluginBase.extend({
       name: options.name,
 
       defaultConfig: {
@@ -56,7 +56,7 @@ module.exports = {
               method: "POST",
               headers: {},
               body: function () {
-                let apiKey = this.apiKey;
+                const apiKey = this.apiKey;
 
                 if (!apiKey) {
                   return;
@@ -85,8 +85,8 @@ module.exports = {
       },
 
       setup: function (/* context */) {
-        let services = this.readConfig("services");
-        let hooks = [
+        const services = this.readConfig("services");
+        const hooks = [
           "willDeploy",
           "willBuild",
           "build",
@@ -107,22 +107,17 @@ module.exports = {
           "didFail",
         ];
 
-        let servicesWithNoHooksConfigured = pick(services, function (service) {
-          return _.intersection(Object.keys(service), hooks).length === 0;
-        });
-
-        _.forIn(
-          servicesWithNoHooksConfigured,
-          function (value, key) {
-            this.log(
-              "Warning! " +
-                key +
-                " - Service configuration found but no hook specified in deploy configuration. Service will not be notified.",
-              { color: "yellow" }
-            );
-          },
-          this
+        const servicesWithNoHooksConfigured = pick(
+          services,
+          (service) => _.intersection(Object.keys(service), hooks).length === 0
         );
+
+        for (const serviceName in servicesWithNoHooksConfigured) {
+          this.log(
+            `Warning! ${serviceName} - Service configuration found but no hook specified in deploy configuration. Service will not be notified.`,
+            { color: "yellow" }
+          );
+        }
       },
 
       willDeploy: notificationHook("willDeploy"),
