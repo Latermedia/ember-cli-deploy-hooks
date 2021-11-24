@@ -1,6 +1,6 @@
 {
   "name": "@latermedia/ember-cli-deploy-hooks",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Ember CLI Deploy plugin for calling webhooks during deployments",
   "keywords": [
     "ember-addon",
