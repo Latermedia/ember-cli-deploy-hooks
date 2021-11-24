@@ -18,7 +18,6 @@
     "test": "node tests/runner.js"
   },
   "dependencies": {
-    "core-object": "^3.1.5",
     "ember-cli-deploy-plugin": "^0.2.9",
     "lodash": "^3.10.1",
     "request": "^2.88.2",
