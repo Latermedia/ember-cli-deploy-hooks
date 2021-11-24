@@ -10,30 +10,30 @@ let pick = _.pick;
 
 function notificationHook(hookName) {
   return function (context) {
-    let preConfig = this.readConfig("configuredServices");
-    let userConfig = this.readConfig("services");
+    const preConfig = this.readConfig("configuredServices");
+    const userConfig = this.readConfig("services");
 
-    let promises = [];
+    const promises = [];
 
-    for (let key in userConfig) {
-      let defaults = preConfig[key] || {};
-      let user = userConfig[key] || {};
-      let hook = userConfig[key][hookName] || {};
+    for (let serviceName in userConfig) {
+      const defaultOptions = preConfig[serviceName] || {};
+      const userOptions = userConfig[serviceName] || {};
+      const hookOptions = userConfig[serviceName][hookName] || {};
 
-      let service = new Service({
-        defaults: defaults,
-        user: user,
-        hook: hook,
+      const service = new Service({
+        defaults: defaultOptions,
+        user: userOptions,
+        hook: hookOptions,
       });
 
       if (service.serviceOptions[hookName]) {
-        let notify = new Notify({
+        const notify = new Notify({
           plugin: this,
         });
 
-        let opts = service.buildServiceCall(context);
+        const opts = service.buildServiceCall(context);
 
-        promises.push(notify.send(key, opts));
+        promises.push(notify.send(serviceName, opts));
       }
     }
 
