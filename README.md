@@ -1,9 +1,12 @@
-# ember-cli-deploy-webhooks [![Build Status](https://travis-ci.org/simplabs/ember-cli-deploy-webhooks.svg)](https://travis-ci.org/simplabs/ember-cli-deploy-webhooks)
+# ember-cli-deploy-hooks &middot; [![License](https://img.shields.io/github/license/Latermedia/ember-cli-deploy-hooks)](https://github.com/Latermedia/ember-cli-deploy-hooks/blob/master/LICENSE.md) [![Build Status](https://img.shields.io/circleci/build/github/Latermedia/ember-cli-deploy-hooks)](https://app.circleci.com/pipelines/github/Latermedia/ember-cli-deploy-hooks)  [![Version](https://img.shields.io/github/package-json/v/Latermedia/ember-cli-deploy-hooks)](https://github.com/Latermedia/ember-cli-deploy-hooks/packages/1104363)
 
 > An ember-cli-deploy plugin to notify external services (e.g. an error
 > tracking service) of successful hook executions in your deploy pipeline.
 
-[![](https://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/plugins/ember-cli-deploy-webhooks.svg)](http://ember-cli-deploy.github.io/ember-cli-deploy-version-badges/)
+This repo is a fork of [ember-cli-deploy-webhooks](https://github.com/simplabs/ember-cli-deploy-webhooks).
+That project is no longer being maintained, and the repo has been marked as read-only.
+This fork is intended to continue development and maintenance on this project.
+We have renamed the project to `ember-cli-deploy-hooks` to avoid naming conflicts and to distiguish this project from it's predecessor.
 
 ## What is an ember-cli-deploy plugin?
 
@@ -18,13 +21,13 @@ To get up and running quickly, do the following:
 - Install this plugin
 
 ```bash
-$ ember install ember-cli-deploy-webhooks
+$ ember install @latermedia/ember-cli-deploy-hooks
 ```
 - Place the following configuration into `config/deploy.js`
 
 
 ```javascript
-ENV.webhooks = {
+ENV.hooks = {
   services: {
     "<some-key>": {
       url: <service-url>,
@@ -86,7 +89,7 @@ For detailed information on how configuration of plugins works, please refer to 
 An object that identifies all webhooks you want to notify. You will put a key for every service you want to call on deploy here.
 
 A `service` configuration needs to provide four properties as configuration for
-`ember-cli-deploy-webhooks` to know how to notify the service correctly:
+`ember-cli-deploy-hooks` to know how to notify the service correctly:
 
 - `url` The url to call
 - `method` The HTTP-method to use for the call (defaults to `'POST'`)
@@ -102,7 +105,7 @@ A `service` configuration needs to provide four properties as configuration for
 
 Bearer authentication is also supported. Please refer to
 [request](https://github.com/request/request#http-authentication)'s docs for
-more details as `ember-cli-deploy-webhooks` uses `request` internally.
+more details as `ember-cli-deploy-hooks` uses `request` internally.
 
 <hr/>
 **Whenever one of these properties (except `auth`) returns a _falsy_ value, the service will _not_ be
@@ -117,7 +120,7 @@ itself.
 *Example:*
 
 ```javascript
-ENV.webhooks = {
+ENV.hooks = {
   services: {
     slack: {
       webhookURL: '<your-webhook-url>',
@@ -146,7 +149,7 @@ als be used to override the defaults that you specify on a service.
 *Example:*
 
 ```javascript
-  ENV.webhooks = {
+  ENV.hooks = {
     services: {
       slack: {
         url: 'your-webhook-url',
@@ -183,7 +186,7 @@ the defaults.
 *Example:*
 
 ```javascript
-ENV.webhooks = {
+ENV.hooks = {
   services: {
     bugsnag: {
       url: 'https://bugsnag.simplabs.com/deploy',
@@ -200,7 +203,7 @@ plugin users. This for example is basically the default implementation that is
 already configured for the slack service:
 
 ```javascript
-  ENV.webhooks.services = {
+  ENV.hooks.services = {
     // ...
     slack: {
       url: function() {
@@ -218,7 +221,7 @@ hooks that should send a message to slack.
 *Example:*
 
 ```javascript
-  ENV.webhooks.services = {
+  ENV.hooks.services = {
     slack: {
       webhookURL: '<your-slack-webhook-url>',
       didActivate: {
@@ -309,7 +312,7 @@ least you have to provide a `text` property in the payload.
 __Default configuration__
 
 ```javascript
-  ENV.webhooks.services = {
+  ENV.hooks.services = {
     // ...
     slack: {
       url: function() {
@@ -330,7 +333,7 @@ options can be overridden as described before of course.
 *Example:*
 
 ```javascript
-ENV.webhooks = {
+ENV.hooks = {
   services: {
     simplabs: {
       url: 'https://notify.simplabs.com/deploy',
@@ -374,5 +377,5 @@ The underlying http-library used to send requests to the specified services. Thi
 ## License
 
 ember-cli-deploy-webhooks is developed by and &copy;
-[simplabs GmbH](http://simplabs.com) and contributors. It is released under the
-[MIT License](https://github.com/simplabs/ember-cli-deploy-webhooks/blob/master/LICENSE).
+[Later](http://later.com) and contributors. It is released under the
+[MIT License](https://github.com/Latermedia/ember-cli-deploy-hooks/blob/master/LICENSE).
