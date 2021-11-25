@@ -164,7 +164,10 @@ describe("webhooks plugin", function () {
             let call = serviceCalls[0];
 
             assert.equal(call.url, BUGSNAG_URI);
-            assert.deepEqual(call.body, { apiKey: "4321" });
+            assert.deepEqual(call.body, {
+              apiKey: "4321",
+              releaseStage: undefined,
+            });
           });
         });
 

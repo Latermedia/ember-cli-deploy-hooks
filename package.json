@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "ember-cli-deploy-plugin": "^0.2.9",
-    "lodash": "^3.10.1",
+    "lodash.merge": "^4.6.2",
+    "lodash.pick": "^4.4.0",
+    "lodash.pickby": "^4.6.0",
     "request": "^2.88.2",
     "rsvp": "^4.8.4"
   },

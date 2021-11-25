@@ -5,8 +5,7 @@ let RSVP = require("rsvp");
 let DeployPluginBase = require("ember-cli-deploy-plugin");
 let Notify = require("./lib/notify");
 let Service = require("./lib/service");
-let _ = require("lodash");
-let pick = _.pick;
+let pickBy = require("lodash.pickby");
 
 function notificationHook(hookName) {
   return function (context) {
@@ -107,10 +106,14 @@ module.exports = {
           "didFail",
         ];
 
-        const servicesWithNoHooksConfigured = pick(
-          services,
-          (service) => _.intersection(Object.keys(service), hooks).length === 0
-        );
+        const servicesWithNoHooksConfigured = pickBy(services, (service) => {
+          const configuredHooks = Object.keys(service).filter((serviceKey) =>
+            hooks.includes(serviceKey)
+          );
+          return configuredHooks.length === 0;
+        });
+
+        console.log(servicesWithNoHooksConfigured);
 
         for (const serviceName in servicesWithNoHooksConfigured) {
           this.log(
