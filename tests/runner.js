@@ -1,27 +1,27 @@
-'use strict';
+"use strict";
 
-let glob = require('glob');
-let Mocha = require('mocha');
+let glob = require("glob");
+let Mocha = require("mocha");
 
 let mocha = new Mocha({
-  reporter: 'spec'
+  reporter: "spec",
 });
 
 let arg = process.argv[2];
-let root = 'tests/';
+let root = "tests/";
 
 function addFiles(mocha, files) {
   glob.sync(root + files).forEach(mocha.addFile.bind(mocha));
 }
 
-addFiles(mocha, '/**/*-nodetest.js');
+addFiles(mocha, "/**/*-nodetest.js");
 
-if (arg === 'all') {
-  addFiles(mocha, '/**/*-nodetest-slow.js');
+if (arg === "all") {
+  addFiles(mocha, "/**/*-nodetest-slow.js");
 }
 
-mocha.run(function(failures) {
-  process.on('exit', function() {
+mocha.run(function (failures) {
+  process.on("exit", function () {
     process.exit(failures);  // eslint-disable-line
   });
 });

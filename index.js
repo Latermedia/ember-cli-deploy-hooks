@@ -1,133 +1,156 @@
 /* jshint node: true */
-'use strict';
+"use strict";
 
-var RSVP             = require('rsvp');
-var DeployPluginBase = require('ember-cli-deploy-plugin');
-var Notify = require('./lib/notify');
-var Service = require('./lib/service');
-var _ = require('lodash');
-var pick = _.pick;
+let RSVP = require("rsvp");
+let DeployPluginBase = require("ember-cli-deploy-plugin");
+let Notify = require("./lib/notify");
+let Service = require("./lib/service");
+let pickBy = require("lodash.pickby");
 
 function notificationHook(hookName) {
-  return function(context) {
-    var preConfig  = this.readConfig('configuredServices');
-    var userConfig = this.readConfig('services');
+  return function (context) {
+    const preConfig = this.readConfig("configuredServices");
+    const userConfig = this.readConfig("services");
 
-    var promises = [];
+    const promises = [];
 
-    for (var key in userConfig) {
-      var defaults = preConfig[key] || {};
-      var user     = userConfig[key] || {};
-      var hook     = userConfig[key][hookName] || {};
+    for (let serviceName in userConfig) {
+      const defaultOptions = preConfig[serviceName] || {};
+      const userOptions = userConfig[serviceName] || {};
+      const hookOptions = userConfig[serviceName][hookName] || {};
 
-      var service = new Service({
-        defaults: defaults,
-        user: user,
-        hook: hook
+      const service = new Service({
+        defaults: defaultOptions,
+        user: userOptions,
+        hook: hookOptions,
       });
 
       if (service.serviceOptions[hookName]) {
-        var notify = new Notify({
-          plugin: this
+        const notify = new Notify({
+          plugin: this,
         });
 
-        var opts = service.buildServiceCall(context);
+        const opts = service.buildServiceCall(context);
 
-        promises.push(notify.send(key, opts));
+        promises.push(notify.send(serviceName, opts));
       }
     }
 
     return RSVP.all(promises);
-  }
+  };
 }
 
 module.exports = {
   name: "ember-cli-deploy-hooks",
 
-  createDeployPlugin: function(options) {
-    var DeployPlugin = DeployPluginBase.extend({
+  createDeployPlugin: function (options) {
+    const DeployPlugin = DeployPluginBase.extend({
       name: options.name,
 
       defaultConfig: {
-        configuredServices: function(/* context */) {
+        configuredServices: function (/* context */) {
           return {
             bugsnag: {
-              url: 'http://notify.bugsnag.com/deploy',
-              method: 'POST',
+              url: "http://notify.bugsnag.com/deploy",
+              method: "POST",
               headers: {},
-              body: function() {
-                var apiKey = this.apiKey;
+              body: function () {
+                const apiKey = this.apiKey;
 
-                if (!apiKey) { return; }
+                if (!apiKey) {
+                  return;
+                }
 
                 return {
                   apiKey: this.apiKey,
-                  releaseStage: process.env.DEPLOY_TARGET
-                }
-              }
+                  releaseStage: process.env.DEPLOY_TARGET,
+                };
+              },
             },
 
             slack: {
-              url: function() {
+              url: function () {
                 return this.webhookURL;
               },
-              method: 'POST',
-              headers: {}
-            }
-          }
+              method: "POST",
+              headers: {},
+            },
+          };
         },
 
-        httpClient: function(context) {
+        httpClient: function (context) {
           return context.notifyHTTPClient;
+        },
+      },
+
+      setup: function (/* context */) {
+        const services = this.readConfig("services");
+        const hooks = [
+          "willDeploy",
+          "willBuild",
+          "build",
+          "didBuild",
+          "willPrepare",
+          "prepare",
+          "didPrepare",
+          "willUpload",
+          "upload",
+          "didUpload",
+          "willActivate",
+          "activate",
+          "didActivate",
+          "didDeploy",
+          "teardown",
+          "fetchRevisions",
+          "displayRevisions",
+          "didFail",
+        ];
+
+        const servicesWithNoHooksConfigured = pickBy(services, (service) => {
+          const configuredHooks = Object.keys(service).filter((serviceKey) =>
+            hooks.includes(serviceKey)
+          );
+          return configuredHooks.length === 0;
+        });
+
+        console.log(servicesWithNoHooksConfigured);
+
+        for (const serviceName in servicesWithNoHooksConfigured) {
+          this.log(
+            `Warning! ${serviceName} - Service configuration found but no hook specified in deploy configuration. Service will not be notified.`,
+            { color: "yellow" }
+          );
         }
       },
 
-      setup: function(/* context */) {
-        var services = this.readConfig('services');
-        var hooks = [
-          'willDeploy', 'willBuild', 'build', 'didBuild', 'willPrepare', 'prepare',
-          'didPrepare', 'willUpload', 'upload', 'didUpload', 'willActivate',
-          'activate', 'didActivate', 'didDeploy', 'teardown', 'fetchRevisions',
-          'displayRevisions', 'didFail'
-        ];
+      willDeploy: notificationHook("willDeploy"),
 
-        var servicesWithNoHooksConfigured = pick(services, function(service) {
-          return _.intersection(Object.keys(service), hooks).length === 0;
-        });
+      willBuild: notificationHook("willBuild"),
+      build: notificationHook("build"),
+      didBuild: notificationHook("didBuild"),
 
-        _.forIn(servicesWithNoHooksConfigured, function(value, key) {
-          this.log('Warning! '+key+' - Service configuration found but no hook specified in deploy configuration. Service will not be notified.', { color: 'yellow' });
-        }, this);
-      },
+      willPrepare: notificationHook("willPrepare"),
+      prepare: notificationHook("prepare"),
+      didPrepare: notificationHook("didPrepare"),
 
-      willDeploy: notificationHook('willDeploy'),
+      willUpload: notificationHook("willUpload"),
+      upload: notificationHook("upload"),
+      didUpload: notificationHook("didUpload"),
 
-      willBuild: notificationHook('willBuild'),
-      build: notificationHook('build'),
-      didBuild: notificationHook('didBuild'),
+      willActivate: notificationHook("willActivate"),
+      activate: notificationHook("activate"),
+      didActivate: notificationHook("didActivate"),
 
-      willPrepare: notificationHook('willPrepare'),
-      prepare: notificationHook('prepare'),
-      didPrepare: notificationHook('didPrepare'),
+      didDeploy: notificationHook("didDeploy"),
 
-      willUpload: notificationHook('willUpload'),
-      upload: notificationHook('upload'),
-      didUpload: notificationHook('didUpload'),
+      teardown: notificationHook("teardown"),
 
-      willActivate: notificationHook('willActivate'),
-      activate: notificationHook('activate'),
-      didActivate: notificationHook('didActivate'),
+      fetchRevisions: notificationHook("fetchRevisions"),
+      displayRevisions: notificationHook("displayRevisions"),
 
-      didDeploy: notificationHook('didDeploy'),
-
-      teardown: notificationHook('teardown'),
-
-      fetchRevisions: notificationHook('fetchRevisions'),
-      displayRevisions: notificationHook('displayRevisions'),
-
-      didFail: notificationHook('didFail')
+      didFail: notificationHook("didFail"),
     });
 
     return new DeployPlugin();
-  }
+  },
 };
